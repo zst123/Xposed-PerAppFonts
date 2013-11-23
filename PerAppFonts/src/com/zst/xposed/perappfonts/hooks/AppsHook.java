@@ -26,7 +26,8 @@ public class AppsHook {
 	 * of apps and we don't want to slow boot time by reading from a large file.
 	 */
 	public static boolean handleLoadSystem(final LoadPackageParam lpp, XSharedPreferences pref) {
-		if (lpp.packageName.equals("android") || lpp.packageName.equals("com.android.systemui")) {
+		if (lpp.packageName.equals(Common.PACKAGE_ANDROID_SYSTEM) ||
+			lpp.packageName.equals("com.android.systemui")) {
 			pref.reload();
 			if (!pref.contains(lpp.packageName)) return false;
 			String unparsed = pref.getString(lpp.packageName, Common.DEFAULT_FONT_ALL_APPS);
@@ -50,8 +51,8 @@ public class AppsHook {
 	
 	public static void handleAllApps(final LoadPackageParam lpp, XSharedPreferences pref) {
 		pref.reload();
-		String fontString = pref.getString(Common.KEY_FONT_EVERY_APP, Common.DEFAULT_FONT_EVERY_APP);
-		mFontType = FontHelper.parsedPref(MainXposed.sModuleRes, fontString+Common.SETTINGS_SPLIT_SYMBOL+"0", MainXposed.sFontLoader);
+		String fontString = pref.getString(Common.KEY_FONT_ANDROID_SYSTEM, Common.DEFAULT_FONT_ALL_APPS);
+		mFontType = FontHelper.parsedPref(MainXposed.sModuleRes, fontString, MainXposed.sFontLoader);
 		hookTextView(lpp, XCallback.PRIORITY_LOWEST);
 	}
 	

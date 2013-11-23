@@ -44,7 +44,6 @@ public class MainXposed implements IXposedHookZygoteInit, IXposedHookLoadPackage
 		 * inform me(zst123).
 		 */
 		sEveryAppFontEnabled = sMainPref.getBoolean(Common.KEY_ENABLE_EVERY_APP, false);
-		sEveryAppFontForced = sMainPref.getBoolean(Common.KEY_FORCE_EVERY_APP, false);
 	}
 	
 	@Override
@@ -54,7 +53,8 @@ public class MainXposed implements IXposedHookZygoteInit, IXposedHookLoadPackage
 		}
 		
 		boolean hook;
-		if (lpp.packageName.equals("android") || lpp.packageName.equals("com.android.systemui")) {
+		if (lpp.packageName.equals(Common.PACKAGE_ANDROID_SYSTEM) ||
+			lpp.packageName.equals("com.android.systemui")) {
 			hook = AppsHook.handleLoadSystem(lpp, sMainPref);
 			ForceFontsHook.handleLoad(lpp, sForcePref, sMainPref);
 		} else {
@@ -62,8 +62,8 @@ public class MainXposed implements IXposedHookZygoteInit, IXposedHookLoadPackage
 			ForceFontsHook.handleLoad(lpp, sForcePref, sAppPref);
 		}
 		
-		if (sEveryAppFontEnabled && sEveryAppFontForced && !hook) {
-			ForceFontsHook.handleLoadAllApps(lpp);
+		if (sEveryAppFontEnabled && !hook) {
+			ForceFontsHook.handleLoadAllApps(lpp, sForcePref, sAppPref);
 		}
 	}
 	

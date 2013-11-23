@@ -1,5 +1,6 @@
 package com.zst.xposed.perappfonts.hooks;
 
+import com.zst.xposed.perappfonts.Common;
 import com.zst.xposed.perappfonts.helpers.FontHelper.FontType;
 
 import android.graphics.Typeface;
@@ -24,7 +25,11 @@ public class ForceFontsHook {
 		return true;
 	}
 	
-	public static boolean handleLoadAllApps(final LoadPackageParam lpp) {
+	public static boolean handleLoadAllApps(final LoadPackageParam lpp, XSharedPreferences force_pref, XSharedPreferences enabled_pref) {
+		enabled_pref.reload();
+		if (!enabled_pref.contains(Common.PACKAGE_ANDROID_SYSTEM)) return false;
+		force_pref.reload();
+		if (!force_pref.contains(Common.PACKAGE_ANDROID_SYSTEM)) return false;
 		hookTextView(lpp);
 		mFontType = AppsHook.mFontType;
 		return true;

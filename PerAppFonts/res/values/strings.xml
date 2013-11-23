@@ -15,9 +15,7 @@
     <string name="font_folder_title">Font Folder</string>
     <string name="font_folder_summary">Fonts will be loaded from this folder on boot-up:\n</string>
     <string name="font_everything_enable_title">Replace Entire System Font (Requires reboot)</string>
-    <string name="font_everything_enable_summary">Replace the font for every app that doesn\'t have a setting. \nEnabling this could degrade performance.</string>
-    <string name="font_everything_choose_title">Choose Entire System Font</string>
-    <string name="font_everything_force_title">Force Entire System Font</string>
+    <string name="font_everything_enable_summary">Replace the font for every app that doesn\'t have a setting with the one specified for Android System. \nEnabling this could degrade performance.</string>
 
     <!-- SettingsActivity: ActionBar -->
     <string name="launch_app">Launch App</string>
