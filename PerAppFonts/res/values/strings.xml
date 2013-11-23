@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Main App Texts -->
+    <string name="app_name">PerAppFonts</string>
+    <string name="app_description">Apply custom fonts on a Per-App Basis (zst123)</string>
+
+    <!-- MainActivity -->
+    <string name="search">@android:string/search_go</string>
+    <string name="refresh">Refresh</string>
+    <string name="preference">Preference</string>
+    <string name="toast_warning">Applications are still being loaded, please wait.</string>
+
+    <!-- PreferenceActivity -->
+    <string name="font_folder_title">Font Folder</string>
+    <string name="font_folder_summary">Fonts will be loaded from this folder on boot-up:\n</string>
+    <string name="font_everything_enable_title">Replace Entire System Font (Requires reboot)</string>
+    <string name="font_everything_enable_summary">Replace the font for every app that doesn\'t have a setting. \nEnabling this could degrade performance.</string>
+    <string name="font_everything_choose_title">Choose Entire System Font</string>
+    <string name="font_everything_force_title">Force Entire System Font</string>
+
+    <!-- SettingsActivity: ActionBar -->
+    <string name="launch_app">Launch App</string>
+    <string name="launch_app_error">Application cannot be launched</string>
+    <string name="kill_app">Kill App</string>
+    <string name="kill_app_text">Force kill this app?\n(Requires Superuser Permission)</string>
+    <!-- SettingsActivity: Layout -->
+    <string name="please_note">Please Note</string>
+    <string name="please_note_android_system">Changing Android System font does not change the entire system fonts. It only changes views in the framework like the Lockscreen, App-Not-Responding &amp; Battery Low Dialogs etc.\n To change the entire system font with the Android System, you may find it in \'Preferences\' from the main screen.</string>
+    <string name="please_note_app">This module replaces fonts at a very low level. Some apps might continue to show their own fonts that\'s bundled in it. To prevent this, enable Force Fonts</string>
+    <string name="enabled">Enable</string>
+    <string name="enabled_android_system">A Reboot is required for the fonts to take effect in Android System</string>
+    <string name="enabled_app">You might need to force kill the app for changes to take effect.</string>
+    <string name="weight">Font Weight</string>
+    <string name="weight_default">Default</string>
+    <string name="weight_bold">Bold</string>
+    <string name="weight_italic">Italic</string>
+    <string name="weight_bolditalic">Bold &amp; Italic</string>
+    <string name="force_title">Force Fonts</string>
+    <string name="force_description">If an app continues to show their own fonts, use this to force it at the expense of some performance. This replaces the fonts at a higher level.</string>
+    <string name="font">Font Family</string>
+    <string name="font_change">Change Font Family</string>
+
+    <!-- Font Names -->
+    <string name="font_default">System Default</string>
+    <string name="font_monospace">Monospace</string>
+    <string name="font_serif">Serif</string>
+    <string name="font_sans">Sans</string>
+    <string name="font_roboto_kitkat">Roboto Condensed (KitKat)</string>
+    <string name="font_storopia">Storopia</string>
+    <string name="font_rosemary">Rosemary</string>
+    <string name="font_roboto_slab">Roboto Slab</string>
+
+    <!-- Others -->
+    <string name="sample_text">ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 1234567890 !@#$%^*()_+][;,.{}|:"?</string>
+
+</resources>

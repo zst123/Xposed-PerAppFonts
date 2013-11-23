@@ -1,0 +1,8 @@
+<resources>
+
+    <style name="AppTheme" parent="@android:style/Theme.Holo.Light"></style>
+
+    <color name="text_color">#484848</color>
+    <color name="text_color_slightly_lighter">#606060</color>
+
+</resources>

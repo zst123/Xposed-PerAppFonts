@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@null"
+    android:orientation="vertical" >
+
+    <ScrollView
+        android:id="@+id/scrollView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:background="#eee" >
+
+        <LinearLayout
+            android:id="@+id/LinearLayout1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:id="@+id/note_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginTop="12dp"
+                android:background="@layout/bg_card_ui"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/note_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/please_note"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/text_color"
+                    android:textSize="22sp" />
+
+                <TextView
+                    android:id="@+id/note_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/please_note_app"
+                    android:textColor="@color/text_color" />
+
+                <requestFocus />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/enable_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginTop="4dp"
+                android:background="@layout/bg_card_ui"
+                android:orientation="vertical" >
+
+                <Switch
+                    android:id="@+id/enable_switch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/enabled"
+                    android:textColor="@color/text_color"
+                    android:textSize="22sp" />
+
+                <TextView
+                    android:id="@+id/enable_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/enabled_android_system"
+                    android:textColor="@color/text_color" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/weight_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginTop="4dp"
+                android:background="@layout/bg_card_ui"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/weight_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/weight"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/text_color"
+                    android:textSize="22sp" />
+
+                <RadioGroup
+                    android:id="@+id/weight_radio_group"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <RadioButton
+                        android:id="@+id/weight_radio0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="-4dp"
+                        android:checked="true"
+                        android:text="@string/weight_default"
+                        android:textColor="@color/text_color" />
+
+                    <RadioButton
+                        android:id="@+id/weight_radio1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="-4dp"
+                        android:text="@string/weight_bold"
+                        android:textColor="@color/text_color" />
+
+                    <RadioButton
+                        android:id="@+id/weight_radio2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="-4dp"
+                        android:text="@string/weight_italic"
+                        android:textColor="@color/text_color" />
+
+                    <RadioButton
+                        android:id="@+id/weight_radio3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="-4dp"
+                        android:text="@string/weight_bolditalic"
+                        android:textColor="@color/text_color" />
+                </RadioGroup>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/font_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginTop="4dp"
+                android:background="@layout/bg_card_ui"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/font_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/font"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/text_color"
+                    android:textSize="22sp" />
+
+                <HorizontalScrollView
+                    android:id="@+id/font_horizontalScrollView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:requiresFadingEdge="horizontal" >
+
+                    <TextView
+                        android:id="@+id/font_preview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginTop="8dp"
+                        android:fadingEdgeLength="20dp"
+                        android:text="@string/sample_text"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/text_color_slightly_lighter"
+                        android:textSize="20sp" />
+                </HorizontalScrollView>
+
+                <Button
+                    android:id="@+id/font_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/font_change" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/force_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginTop="4dp"
+                android:background="@layout/bg_card_ui"
+                android:orientation="vertical" >
+
+                <Switch
+                    android:id="@+id/force_switch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/force_title"
+                    android:textColor="@color/text_color"
+                    android:textSize="22sp" />
+
+                <TextView
+                    android:id="@+id/force_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/force_description"
+                    android:textColor="@color/text_color" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>
