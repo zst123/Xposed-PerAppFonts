@@ -23,6 +23,7 @@ public class FontLoader {
 	
 	private void getFonts(String folder_string) {
 		File folder = new File(folder_string);
+		if (!folder.exists()) return;
 		if (!folder.isDirectory()) return;
 		
 		File[] file_array = folder.listFiles();
@@ -43,6 +44,7 @@ public class FontLoader {
 	}
 	
 	public Typeface findFont(String fontname) {
+		if (array == null) return null;
 		for (int x = 0; x < array.length; x++) {
 			if (array[x] == null) continue;
 			Log.d("test", "GOT = " + array[x].name + "-" + fontname);

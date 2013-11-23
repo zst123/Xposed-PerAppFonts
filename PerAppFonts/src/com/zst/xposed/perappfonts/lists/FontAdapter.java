@@ -68,13 +68,15 @@ public class FontAdapter extends BaseAdapter implements Filterable{
 					mFilteredFontsList = temporaryList;
 					notifyDataSetChangedOnHandler();
 					FontLoader loader = new FontLoader(mPref);
-					for (int x = 0; x < loader.array.length; x++) {
-						if (loader.array[x] == null) continue;
-						FontItem item = new FontItem();
-						item.title = loader.array[x].name;
-						item.filename = loader.array[x].name;
-						item.font = loader.array[x].font;
-						temporaryList.add(item);
+					if (loader.array != null) {
+						for (int x = 0; x < loader.array.length; x++) {
+							if (loader.array[x] == null) continue;
+							FontItem item = new FontItem();
+							item.title = loader.array[x].name;
+							item.filename = loader.array[x].name;
+							item.font = loader.array[x].font;
+							temporaryList.add(item);
+						}
 					}
 					mFilteredFontsList = temporaryList;
 					notifyDataSetChangedOnHandler();
