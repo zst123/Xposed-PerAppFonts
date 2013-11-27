@@ -1,7 +1,9 @@
 package com.zst.xposed.perappfonts.lists;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -26,20 +28,16 @@ import com.zst.xposed.perappfonts.R;
 import com.zst.xposed.perappfonts.helpers.FontHelper;
 import com.zst.xposed.perappfonts.helpers.FontLoader;
 
-public class FontAdapter extends BaseAdapter implements Filterable{
-	
+public class FontAdapter extends BaseAdapter implements Filterable {
+
 	private Handler mHandler;
 	private Context mContext;
 	private Resources mRes;
 	private SharedPreferences mPref;
 	protected List<FontItem> mFontsList = null;
 	protected List<FontItem> mFilteredFontsList = new LinkedList<FontItem>();
+	private LayoutInflater mLayoutInflater;
 
-	
-	public static FontAdapter createAdapter(Context context) {
-		return new FontAdapter(context);
-	}
-	
 	@SuppressLint("WorldReadableFiles")
 	@SuppressWarnings("deprecation")
 	public FontAdapter(Context context) {
@@ -47,8 +45,9 @@ public class FontAdapter extends BaseAdapter implements Filterable{
 		mRes = mContext.getResources();
 		mPref = mContext.getSharedPreferences(Common.PREFERENCE_MAIN, Activity.MODE_WORLD_READABLE);
 		mHandler = new Handler();
+		mLayoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	}
-	
+
 	public void update(final View progressbar) {
 		new Thread(new Runnable() {
 			@Override
@@ -68,16 +67,16 @@ public class FontAdapter extends BaseAdapter implements Filterable{
 					mFilteredFontsList = temporaryList;
 					notifyDataSetChangedOnHandler();
 					FontLoader loader = new FontLoader(mPref);
-					if (loader.array != null) {
-						for (int x = 0; x < loader.array.length; x++) {
-							if (loader.array[x] == null) continue;
-							FontItem item = new FontItem();
-							item.title = loader.array[x].name;
-							item.filename = loader.array[x].name;
-							item.font = loader.array[x].font;
-							temporaryList.add(item);
-						}
+					Iterator<Entry<String, Typeface>> entrySetIter = loader.map.entrySet().iterator();
+					while (entrySetIter.hasNext()) {
+						Entry<String, Typeface> font = entrySetIter.next();
+						FontItem item = new FontItem();
+						item.title = font.getKey();
+						item.filename = font.getKey();
+						item.font = font.getValue();
+						temporaryList.add(item);
 					}
+
 					mFilteredFontsList = temporaryList;
 					notifyDataSetChangedOnHandler();
 					toggleProgressBarVisible(progressbar, false);
@@ -85,16 +84,17 @@ public class FontAdapter extends BaseAdapter implements Filterable{
 			}
 		}).start();
 	}
-	
+
 	private void toggleProgressBarVisible(final View v, final boolean b) {
 		mHandler.post(new Runnable() {
 			@Override
 			public void run() {
-				if (v != null) v.setVisibility(b ? View.VISIBLE : View.GONE);
+				if (v != null)
+					v.setVisibility(b ? View.VISIBLE : View.GONE);
 			}
 		});
 	}
-	
+
 	private void notifyDataSetChangedOnHandler() {
 		mHandler.post(new Runnable() {
 			@Override
@@ -103,95 +103,94 @@ public class FontAdapter extends BaseAdapter implements Filterable{
 			}
 		});
 	}
-	
+
 	@Override
 	public int getCount() {
 		return mFilteredFontsList.size();
 	}
-	
+
 	@Override
 	public FontItem getItem(int position) {
 		return mFilteredFontsList.get(position);
 	}
-	
+
 	@Override
 	public long getItemId(int position) {
 		return mFilteredFontsList.get(position).hashCode();
 	}
-	
+
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		FontViewHolder holder;
 		if (convertView != null) {
 			holder = (FontViewHolder) convertView.getTag();
 		} else {
-			final LayoutInflater layoutInflater = (LayoutInflater) mContext
-					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			convertView = layoutInflater.inflate(R.layout.view_font_list, null, false);
+			convertView = mLayoutInflater.inflate(R.layout.view_font_list, null, false);
 			holder = new FontViewHolder();
-			convertView.setTag(holder);
 			holder.title = (TextView) convertView.findViewById(android.R.id.title);
 			holder.msg = (TextView) convertView.findViewById(android.R.id.message);
 			holder.background = (LinearLayout) convertView.findViewById(R.id.bg);
+			convertView.setTag(holder);
 		}
 		FontItem fontItem = getItem(position);
-		if (holder.title != null) {
-			holder.title.setText(fontItem.title);
-			holder.title.setTypeface(fontItem.font);
+
+		holder.title.setText(fontItem.title);
+		holder.title.setTypeface(fontItem.font);
+
+		holder.msg.setTypeface(fontItem.font);
+
+		if (fontItem.asset) {
+			holder.background.setBackgroundColor(Color.LTGRAY);
+		} else {
+			holder.background.setBackground(null);
 		}
-		if (holder.msg != null) {
-			holder.msg.setTypeface(fontItem.font);
-		}
-		if (holder.background != null) {
-			if (fontItem.asset) {
-				holder.background.setBackgroundColor(Color.LTGRAY);
-			} else {
-				holder.background.setBackground(null);
-			}
-		}
+
 		return convertView;
 	}
-	
+
 	@Override
 	@SuppressLint("DefaultLocale")
 	public Filter getFilter() {
 		return new Filter() {
-	        @Override
-	        protected void publishResults(CharSequence constraint,FilterResults results) {
-	        }
-	        
-	        @Override
-	        protected FilterResults performFiltering(CharSequence constraint) {
-	            FilterResults results = new FilterResults();// Holds the results of a filtering operation in values
-	            List<FontItem> temporaryList = new LinkedList<FontItem>();
+			@Override
+			protected void publishResults(CharSequence constraint, FilterResults results) {
+			}
 
-	            if (mFontsList == null){
-	            	mFontsList = mFilteredFontsList;
-		            notifyDataSetChangedOnHandler();
-	            }
-	            if (TextUtils.isEmpty(constraint)) {
-	                results.count = mFontsList.size();
-	                results.values = mFontsList;
-	                // return original list.
-	            } else {
-	                String filterText = constraint.toString().toLowerCase();
-	                for (int i = 0; i < mFontsList.size(); i++) {
-	                	FontItem item = mFontsList.get(i);
-	                    String data = item.title.toString().toLowerCase();
-	                    if (data.startsWith(filterText)) {
-	                    	temporaryList.add(item);
-	                    }
-	                }
-	                mFilteredFontsList = temporaryList;
-	                results.count = temporaryList.size();
-	                results.values = temporaryList;
-	            }
-	            notifyDataSetChangedOnHandler();
-	            return results;
-	        }
-	    };
+			@Override
+			protected FilterResults performFiltering(CharSequence constraint) {
+				FilterResults results = new FilterResults();// Holds the results
+															// of a filtering
+															// operation in
+															// values
+				List<FontItem> temporaryList = new LinkedList<FontItem>();
+
+				if (mFontsList == null) {
+					mFontsList = mFilteredFontsList;
+					notifyDataSetChangedOnHandler();
+				}
+				if (TextUtils.isEmpty(constraint)) {
+					results.count = mFontsList.size();
+					results.values = mFontsList;
+					// return original list.
+				} else {
+					String filterText = constraint.toString().toLowerCase();
+					for (int i = 0; i < mFontsList.size(); i++) {
+						FontItem item = mFontsList.get(i);
+						String data = item.title.toString().toLowerCase();
+						if (data.startsWith(filterText)) {
+							temporaryList.add(item);
+						}
+					}
+					mFilteredFontsList = temporaryList;
+					results.count = temporaryList.size();
+					results.values = temporaryList;
+				}
+				notifyDataSetChangedOnHandler();
+				return results;
+			}
+		};
 	}
-	
+
 	public class FontItem {
 		public CharSequence title;
 		public CharSequence filename;
@@ -199,7 +198,7 @@ public class FontAdapter extends BaseAdapter implements Filterable{
 		public boolean asset;
 		public boolean header;
 	}
-	
+
 	static class FontViewHolder {
 		TextView title;
 		TextView msg;

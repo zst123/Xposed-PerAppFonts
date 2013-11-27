@@ -42,7 +42,7 @@ public class MainActivity extends Activity {
 		final ImageButton searchButton = (ImageButton) findViewById(R.id.button_search);
 		mProgressBar = findViewById(R.id.progressbar);
 		
-		mAppAdapter = AppAdapter.createAdapter(this);
+		mAppAdapter = new AppAdapter(this);
 		mAppAdapter.update(mProgressBar);
 		list.setAdapter(mAppAdapter);
 		list.setOnItemClickListener(new OnItemClickListener() {

@@ -1,6 +1,9 @@
 package com.zst.xposed.perappfonts.helpers;
 
 import java.io.File;
+import java.io.FilenameFilter;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.zst.xposed.perappfonts.Common;
 
@@ -10,55 +13,42 @@ import android.util.Log;
 import de.robv.android.xposed.XSharedPreferences;
 
 public class FontLoader {
-	
-	public FontHolder[] array;
-	
+
+	public Map<String, Typeface> map = new HashMap<String, Typeface>();
+
 	public FontLoader(XSharedPreferences pref) {
 		getFonts(pref.getString(Common.KEY_FOLDER_FONT, Common.DEFAULT_FOLDER_FONT));
 	}
-	
+
 	public FontLoader(SharedPreferences pref) {
 		getFonts(pref.getString(Common.KEY_FOLDER_FONT, Common.DEFAULT_FOLDER_FONT));
 	}
-	
+
 	private void getFonts(String folder_string) {
 		File folder = new File(folder_string);
-		if (!folder.exists()) return;
-		if (!folder.isDirectory()) return;
-		
-		File[] file_array = folder.listFiles();
-		array = new FontHolder[file_array.length];
-		for (int x = 0; x < file_array.length; x++) {
-			File file = file_array[x];
-			if (!file.getAbsolutePath().endsWith(".ttf")) {
-				array[x] = null;
-				continue;
+		if (!folder.exists())
+			return;
+		if (!folder.isDirectory())
+			return;
+		File[] file_array = folder.listFiles(new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String filename) {
+				if (filename.endsWith(".ttf"))
+					return true;
+				return false;
 			}
-			FontHolder fh = new FontHolder();
-			fh.font = Typeface.createFromFile(file);
-			fh.name = file.getName();
-			Log.d("test", "File: " + fh.name);
-			
-			array[x] = fh;
+		});
+
+		for (File file : file_array) {
+			map.put(file.getName(), Typeface.createFromFile(file));
 		}
+
 	}
-	
+
 	public Typeface findFont(String fontname) {
-		if (array == null) return null;
-		for (int x = 0; x < array.length; x++) {
-			if (array[x] == null) continue;
-			Log.d("test", "GOT = " + array[x].name + "-" + fontname);
-			if (array[x].name.equals(fontname)) {
-				Log.d("test", "FOUND = " + array[x].name + "=" + fontname);
-				return array[x].font;
-			}
-		}
-		return null;
-		
-	}
-	
-	public static class FontHolder {
-		public Typeface font;
-		public String name;
+		if (map == null || map.isEmpty())
+			return null;
+		return map.get(fontname);
+
 	}
 }

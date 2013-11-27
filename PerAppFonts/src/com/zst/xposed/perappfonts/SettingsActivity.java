@@ -267,7 +267,7 @@ public class SettingsActivity extends Activity implements View.OnClickListener,
 		final EditText search_text = (EditText) view.findViewById(R.id.edittext_search);
 		final ImageButton search_button = (ImageButton) view.findViewById(R.id.button_search);
 		final View progressbar = view.findViewById(R.id.progressbar);
-		final FontAdapter fontAdapter = FontAdapter.createAdapter(this);
+		final FontAdapter fontAdapter = new FontAdapter(this);
 		
 		fontAdapter.update(progressbar);
 		listview.setAdapter(fontAdapter);
