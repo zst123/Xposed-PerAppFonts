@@ -1,112 +1,65 @@
 package com.zst.xposed.perappfonts.lists;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
-
-import com.zst.xposed.perappfonts.Common;
-import com.zst.xposed.perappfonts.R;
+import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class AppAdapter extends BaseAdapter implements Filterable {
-	static PackageManager mPackageManager;
+import com.zst.xposed.perappfonts.AppEntry;
+import com.zst.xposed.perappfonts.Common;
+import com.zst.xposed.perappfonts.R;
 
-	Context mContext;
-	Handler mHandler;
-	SharedPreferences mAppPref;
-	SharedPreferences mMainPref;
-
-	protected List<PackageInfo> mInstalledAppInfo;
-	protected List<AppItem> mInstalledApps = new LinkedList<AppItem>();
-	protected List<PackageInfo> temporarylist;
-	// temp. list holding the filtered items
+public class AppAdapter extends ArrayAdapter<AppEntry> implements Filterable {
 
 	private LayoutInflater mLayoutInflater;
-
+	private AppEntryFilter mFilter;
+	
+	// Store not-filtered data
+	private List<AppEntry> mData;
+	
+	private SharedPreferences mAppPref;
+	private SharedPreferences mMainPref;
+	
 	@SuppressLint("WorldReadableFiles")
 	@SuppressWarnings("deprecation")
 	public AppAdapter(Context context) {
-		mPackageManager = context.getPackageManager();
-		mInstalledAppInfo = mPackageManager.getInstalledPackages(PackageManager.GET_PERMISSIONS);
-		mContext = context;
-		temporarylist = mInstalledAppInfo;
-		mHandler = new Handler();
+		super(context, R.layout.view_app_list);
+		// TODO Move loading sharedPref to Loader
 		mAppPref = context.getSharedPreferences(Common.PREFERENCE_APPS, Activity.MODE_WORLD_READABLE);
 		mMainPref = context.getSharedPreferences(Common.PREFERENCE_MAIN, Activity.MODE_WORLD_READABLE);
-		mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		mLayoutInflater = LayoutInflater.from(context);
 	}
 
-	public void update(final View progressbar) {
-		toggleProgressBarVisible(progressbar, true);
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				synchronized (mInstalledApps) {
-					mInstalledApps.clear();
-					for (PackageInfo info : temporarylist) {
-						final AppItem item = new AppItem();
-						item.title = info.applicationInfo.loadLabel(mPackageManager);
-						item.icon = info.applicationInfo.loadIcon(mPackageManager);
-						item.packageName = info.packageName;
-						mHandler.post(new Runnable() {
-							@Override
-							public void run() {
-								final int index = Collections.binarySearch(mInstalledApps, item);
-								if (index < 0) {
-									mInstalledApps.add((-index - 1), item);
-									notifyDataSetChanged();
-								}
-							}
-						});
-					}
-					toggleProgressBarVisible(progressbar, false);
-				}
-			}
-		}).start();
+	public void setData(List<AppEntry> data) {
+		clear();
+		if (data != null) {
+			addAll(data);
+		}
+		mData = data;
 	}
 
-	private void toggleProgressBarVisible(final View v, final boolean b) {
-		mHandler.post(new Runnable() {
-			@Override
-			public void run() {
-				if (v != null)
-					v.setVisibility(b ? View.VISIBLE : View.GONE);
-			}
-		});
+	public List<AppEntry> getData() {
+		return mData;
 	}
 
-	@Override
-	public int getCount() {
-		return mInstalledApps.size();
-	}
-
-	@Override
-	public AppItem getItem(int position) {
-		return mInstalledApps.get(position);
-	}
-
-	@Override
-	public long getItemId(int position) {
-		return mInstalledApps.get(position).packageName.hashCode();
+	static class ViewHolder {
+		TextView name;
+		ImageView icon;
+		TextView pkg;
 	}
 
 	@Override
@@ -115,92 +68,99 @@ public class AppAdapter extends BaseAdapter implements Filterable {
 		if (convertView != null) {
 			holder = (ViewHolder) convertView.getTag();
 		} else {
-			convertView = mLayoutInflater.inflate(R.layout.view_app_list, null, false);
+			convertView = mLayoutInflater.inflate(R.layout.view_app_list, parent, false);
 			holder = new ViewHolder();
-			holder.name = (TextView) convertView.findViewById(R.id.name);
 			holder.icon = (ImageView) convertView.findViewById(android.R.id.icon);
-			holder.pkg = (TextView) convertView.findViewById(R.id.pkg);
+			holder.name = (TextView) convertView.findViewById(android.R.id.text1);
+			holder.pkg = (TextView) convertView.findViewById(android.R.id.text2);
 			convertView.setTag(holder);
 		}
-		AppItem appInfo = getItem(position);
+		AppEntry appInfo = getItem(position);
 
-		holder.name.setText(appInfo.title);
+		holder.name.setText(appInfo.getLabel());
+
+		String packageName = appInfo.getPackageName();
 		boolean pref_enabled;
-		if (appInfo.packageName.equals(Common.PACKAGE_ANDROID_SYSTEM)) {
-			pref_enabled = mMainPref.contains(appInfo.packageName);
-		} else if (appInfo.packageName.equals("com.android.systemui")) {
-			pref_enabled = mMainPref.contains(appInfo.packageName);
+
+		if (packageName.equals(Common.PACKAGE_ANDROID_SYSTEM) || packageName.equals("com.android.systemui")) {
+			pref_enabled = mMainPref.contains(packageName);
 		} else {
-			pref_enabled = mAppPref.contains(appInfo.packageName);
+			pref_enabled = mAppPref.contains(packageName);
 		}
+
 		holder.name.setTextColor(pref_enabled ? Color.BLUE : Color.BLACK);
-
-		holder.pkg.setText(appInfo.packageName);
-
-		Drawable loadIcon = appInfo.icon;
-		holder.icon.setImageDrawable(loadIcon);
+		holder.pkg.setText(packageName);
+		holder.icon.setImageDrawable(appInfo.getIcon());
 
 		return convertView;
 	}
 
 	@Override
 	public Filter getFilter() {
-		Filter filter = new Filter() {
-			@Override
-			@SuppressWarnings("unchecked")
-			protected void publishResults(CharSequence constraint, FilterResults results) {
-				temporarylist = (List<PackageInfo>) results.values;
-				update(null);
-			}
-
-			@Override
-			@SuppressLint("DefaultLocale")
-			protected FilterResults performFiltering(CharSequence constraint) {
-				FilterResults results = new FilterResults();
-				ArrayList<PackageInfo> FilteredList = new ArrayList<PackageInfo>();
-
-				if (TextUtils.isEmpty(constraint)) {
-					// No filter implemented we return all the list
-					results.values = mInstalledAppInfo;
-					results.count = mInstalledAppInfo.size();
-					return results;
-				}
-
-				for (int i = 0; i < mInstalledAppInfo.size(); i++) {
-					String filterText = constraint.toString().toLowerCase();
-					try {
-						PackageInfo data = mInstalledAppInfo.get(i);
-						if (data.applicationInfo.loadLabel(mPackageManager).toString().toLowerCase()
-								.contains(filterText)) {
-							FilteredList.add(data);
-						} else if (data.packageName.contains(filterText)) {
-							FilteredList.add(data);
-						}
-					} catch (Exception e) {
-					}
-				}
-				results.values = FilteredList;
-				results.count = FilteredList.size();
-				return results;
-			}
-		};
-		return filter;
+		if (mFilter == null) {
+			mFilter = new AppEntryFilter(this);
+		}
+		return mFilter;
 	}
 
-	public class AppItem implements Comparable<AppItem> {
-		public CharSequence title;
-		public String packageName;
-		public Drawable icon;
+	@Override
+	public long getItemId(int position) {
+		// For cursor/database etc. ignore it.
+		return 0;
+	}
+
+	public static class AppEntryFilter extends Filter {
+		private AppAdapter mAdapter;
+
+		public AppEntryFilter(AppAdapter adapter) {
+			mAdapter = adapter;
+		}
 
 		@Override
-		public int compareTo(AppItem another) {
-			return this.title.toString().compareTo(another.title.toString());
+		protected FilterResults performFiltering(CharSequence prefix) {
+			FilterResults results = new FilterResults();
+			List<AppEntry> originalValues = mAdapter.getData();
+			if (TextUtils.isEmpty(prefix)) {
+				ArrayList<AppEntry> entries = new ArrayList<AppEntry>(originalValues);
+				results.values = entries;
+				results.count = entries.size();
+			} else {
+				Locale locale = Locale.getDefault();
+				String prefixString = prefix.toString().toLowerCase(locale);
+
+				final int count = originalValues.size();
+				final ArrayList<AppEntry> newValues = new ArrayList<AppEntry>();
+
+				for (int i = 0; i < count; i++) {
+					AppEntry value = originalValues.get(i);
+
+					if (value.getPackageName().startsWith(prefixString)) {
+						newValues.add(value);
+					} else {
+						String label = value.getLabel().toLowerCase(locale);
+						if (label.startsWith(prefixString)) {
+							newValues.add(value);
+						}
+					}
+				}
+				results.values = newValues;
+				results.count = newValues.size();
+			}
+			return results;
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		protected void publishResults(CharSequence constraint, FilterResults results) {
+			mAdapter.clear();
+
+			if (results.count > 0) {
+				mAdapter.addAll((List<AppEntry>) results.values);
+				mAdapter.notifyDataSetChanged();
+			} else {
+				mAdapter.notifyDataSetInvalidated();
+			}
 		}
 	}
 
-	static class ViewHolder {
-		TextView name;
-		ImageView icon;
-		TextView pkg;
-	}
 }

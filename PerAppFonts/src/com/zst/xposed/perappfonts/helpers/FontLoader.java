@@ -9,7 +9,6 @@ import com.zst.xposed.perappfonts.Common;
 
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
-import android.util.Log;
 import de.robv.android.xposed.XSharedPreferences;
 
 public class FontLoader {

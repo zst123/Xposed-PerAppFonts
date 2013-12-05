@@ -1,114 +1,122 @@
 package com.zst.xposed.perappfonts;
 
-import com.zst.xposed.perappfonts.lists.AppAdapter;
-import com.zst.xposed.perappfonts.lists.AppAdapter.AppItem;
+import java.util.List;
 
-import android.os.Bundle;
-import android.app.Activity;
+import android.app.ListActivity;
+import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Intent;
-import android.view.Gravity;
+import android.content.Loader;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.ProgressBar;
+import android.widget.SearchView;
+import android.widget.SearchView.OnQueryTextListener;
 
-public class MainActivity extends Activity {
+import com.zst.xposed.perappfonts.lists.AppAdapter;
+
+public class MainActivity extends ListActivity implements OnQueryTextListener, LoaderCallbacks<List<AppEntry>> {
 	/**
 	 * This is the main activity with the app list
 	 */
-	
+	private static final String TAG = MainActivity.class.getSimpleName();
 	/* Action Bar IDs */
-	static final int MENU_REFRESH = 1;
-	static final int MENU_PREFERENCE = 2;
-	
-	static AppAdapter mAppAdapter;
-	static Toast mToast;
-	static View mProgressBar;
+	private static final int MENU_PREFERENCE = 1;
+	private static final int MENU_SEARCH = 2;
+
+	private AppAdapter mAdapter;
+	private String mCurFilter;
+	private ProgressBar mIndicator;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.layout_app_list);
-		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-		
-		final ListView list = (ListView) findViewById(R.id.app_list);
-		final EditText inputSearch = (EditText) findViewById(R.id.edittext_search);
-		final ImageButton searchButton = (ImageButton) findViewById(R.id.button_search);
-		mProgressBar = findViewById(R.id.progressbar);
-		
-		mAppAdapter = new AppAdapter(this);
-		mAppAdapter.update(mProgressBar);
-		list.setAdapter(mAppAdapter);
-		list.setOnItemClickListener(new OnItemClickListener() {
+		setContentView(R.layout.list_app);
+
+		mAdapter = new AppAdapter(this);
+		setListAdapter(mAdapter);
+		getListView().setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> av, View view, int pos, long id) {
-				if (mProgressBar.getVisibility() == View.VISIBLE) {
-					showToast(R.string.toast_warning);
-					return;
-				}
-				AppItem info = (AppItem) av.getItemAtPosition(pos);
-				openSettings(info);
+				AppEntry item = (AppEntry) mAdapter.getItem(pos);
+				String packageName = item.getPackageName();
+				String label = item.getLabel();
+				openSettings(packageName, label);
 			}
 		});
-		
-		searchButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				mAppAdapter.getFilter().filter(inputSearch.getText().toString());
-			}
-		});
+		mIndicator = (ProgressBar) findViewById(R.id.indicator);
+		getLoaderManager().initLoader(0, null, this);
 	}
-	
-	public void showToast(int resId) {
-		if (mToast == null) {
-			mToast = Toast.makeText(this, resId, Toast.LENGTH_LONG);
-			mToast.setGravity(Gravity.CENTER, 0, 0);
-		}
-		if (!mToast.getView().isShown()) {
-			mToast.show();
-		}
-	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuItem refresh_item = menu.add(Menu.NONE, MENU_REFRESH, 0, R.string.refresh);
-		refresh_item.setIcon(R.drawable.ic_refresh);
-		refresh_item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-		
+		MenuItem search_item = menu.add(Menu.NONE, MENU_SEARCH, 0, R.string.search);
+		SearchView sv = new SearchView(this);
+		sv.setOnQueryTextListener(this);
+		search_item.setActionView(sv);
+		search_item.setIcon(R.drawable.ic_search);
+		search_item.setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW | MenuItem.SHOW_AS_ACTION_ALWAYS);
+
 		MenuItem setting_item = menu.add(Menu.NONE, MENU_PREFERENCE, 0, R.string.preference);
 		setting_item.setIcon(R.drawable.ic_settings);
 		setting_item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 		return true;
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem mi) {
-		switch (mi.getItemId()) {
-		case MENU_REFRESH:
-			if (mProgressBar.getVisibility() != View.VISIBLE){
-				mAppAdapter.update(findViewById(R.id.progressbar));
-			}
-			return true;
+		int menu_id = mi.getItemId();
+		switch (menu_id) {
 		case MENU_PREFERENCE:
 			openPreference();
 		}
 		return false;
 	}
-	
+
 	private void openPreference() {
-        startActivity(new Intent(this, PrefActivity.class));
+		startActivity(new Intent(this, PrefActivity.class));
 	}
-	
-	private void openSettings(AppItem info) {
+
+	private void openSettings(String packageName, String label) {
 		Intent i = new Intent(this, SettingsActivity.class);
-		i.putExtra(Common.EXTRAS_KEY_APP_PKG, info.packageName);
-		i.putExtra(Common.EXTRAS_KEY_APP_NAME, info.title);
+		i.putExtra(Common.EXTRAS_KEY_APP_PKG, packageName);
+		i.putExtra(Common.EXTRAS_KEY_APP_NAME, label);
 		startActivity(i);
+	}
+
+	@Override
+	public boolean onQueryTextChange(String query) {
+		mCurFilter = !TextUtils.isEmpty(query) ? query : null;
+		mAdapter.getFilter().filter(mCurFilter);
+		return false;
+	}
+
+	@Override
+	public boolean onQueryTextSubmit(String query) {
+		return true;
+	}
+
+	@Override
+	public Loader<List<AppEntry>> onCreateLoader(int id, Bundle args) {
+		mIndicator.setVisibility(View.VISIBLE);
+		return new AppLoader(this);
+	}
+
+	@Override
+	public void onLoadFinished(Loader<List<AppEntry>> loader, List<AppEntry> data) {
+		Log.i(TAG, "onLoadFinished");
+		mAdapter.setData(data);
+		mIndicator.setVisibility(View.GONE);
+	}
+
+	@Override
+	public void onLoaderReset(Loader<List<AppEntry>> loader) {
+		Log.i(TAG, "onLoaderReset");
+		mAdapter.setData(null);
 	}
 }
