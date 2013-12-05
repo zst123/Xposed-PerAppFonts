@@ -25,8 +25,10 @@ public class FontLoader {
 
 	private void getFonts(String folder_string) {
 		File folder = new File(folder_string);
-		if (!folder.exists())
-			return;
+		if (!folder.exists()) {
+			if (!folder.mkdir())
+				return;
+		}
 		if (!folder.isDirectory())
 			return;
 		File[] file_array = folder.listFiles(new FilenameFilter() {
