@@ -125,7 +125,8 @@ public class FontAdapter extends BaseAdapter implements Filterable {
 		if (convertView != null) {
 			holder = (FontViewHolder) convertView.getTag();
 		} else {
-			convertView = mLayoutInflater.inflate(R.layout.view_font_list, null, false);
+			// http://www.doubleencore.com/2013/05/layout-inflation-as-intended/
+			convertView = mLayoutInflater.inflate(R.layout.view_font_list, parent, false);
 			holder = new FontViewHolder();
 			holder.title = (TextView) convertView.findViewById(android.R.id.title);
 			holder.msg = (TextView) convertView.findViewById(android.R.id.message);
@@ -142,7 +143,7 @@ public class FontAdapter extends BaseAdapter implements Filterable {
 		if (fontItem.asset) {
 			holder.background.setBackgroundColor(Color.LTGRAY);
 		} else {
-			holder.background.setBackground(null);
+			holder.background.setBackgroundResource(0);
 		}
 
 		return convertView;
