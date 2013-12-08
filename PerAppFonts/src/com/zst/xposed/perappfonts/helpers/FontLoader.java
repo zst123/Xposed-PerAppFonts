@@ -41,7 +41,11 @@ public class FontLoader {
 		});
 		
 		for (File file : file_array) {
-			map.put(file.getName(), Typeface.createFromFile(file));
+			try {
+				map.put(file.getName(), Typeface.createFromFile(file));
+			} catch(Exception e) {
+				map.put(file.getName() + Common.SETTINGS_SUFFIX_INCOMPATIBLE, null);
+			}
 		}
 		
 	}

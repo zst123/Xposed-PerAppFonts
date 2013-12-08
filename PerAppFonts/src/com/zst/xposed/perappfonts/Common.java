@@ -12,6 +12,7 @@ public class Common {
 	public static final String SETTINGS_PREFIX_FONT_ASSET = "@asset/";
 	public static final int SETTINGS_INDEX_FONT = 0;
 	public static final int SETTINGS_INDEX_WEIGHT = 1;
+	public static final String SETTINGS_SUFFIX_INCOMPATIBLE = "@incompatible_font";
 	
 	// Preference file
 	public static final String PREFERENCE_MAIN = "main";

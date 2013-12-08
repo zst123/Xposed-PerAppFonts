@@ -77,6 +77,9 @@ public class FontAdapter extends BaseAdapter implements Filterable {
 						item.title = font.getKey();
 						item.filename = font.getKey();
 						item.font = font.getValue();
+						if (font.getKey().endsWith(Common.SETTINGS_SUFFIX_INCOMPATIBLE)) {
+							item.disable = true;
+						}
 						temporaryList.add(item);
 					}
 					Collections.sort(temporaryList, new Comparator<FontItem>() {
@@ -150,6 +153,9 @@ public class FontAdapter extends BaseAdapter implements Filterable {
 
 		if (fontItem.asset) {
 			holder.background.setBackgroundColor(Color.LTGRAY);
+		} else if (fontItem.disable) {
+			holder.background.setBackgroundColor(Color.argb(255, 255, 100, 100));
+			holder.title.setText(holder.title.getText() + mContext.getString(R.string.incompatible));
 		} else {
 			holder.background.setBackgroundResource(0);
 		}
@@ -205,7 +211,7 @@ public class FontAdapter extends BaseAdapter implements Filterable {
 		public CharSequence filename;
 		public Typeface font;
 		public boolean asset;
-		public boolean header;
+		public boolean disable;
 	}
 
 	static class FontViewHolder {
