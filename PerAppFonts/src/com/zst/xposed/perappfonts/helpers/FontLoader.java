@@ -2,17 +2,18 @@ package com.zst.xposed.perappfonts.helpers;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.zst.xposed.perappfonts.Common;
-
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
+
+import com.zst.xposed.perappfonts.Common;
+
 import de.robv.android.xposed.XSharedPreferences;
 
 public class FontLoader {
-
 	public Map<String, Typeface> map = new HashMap<String, Typeface>();
 
 	public FontLoader(XSharedPreferences pref) {
@@ -39,15 +40,16 @@ public class FontLoader {
 				return false;
 			}
 		});
-
+		
+		Arrays.sort(file_array);
 		for (File file : file_array) {
 			map.put(file.getName(), Typeface.createFromFile(file));
 		}
-
+		
 	}
 
 	public Typeface findFont(String fontname) {
-		if (map == null || map.isEmpty())
+		if (map == null)
 			return null;
 		return map.get(fontname);
 
