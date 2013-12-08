@@ -1,5 +1,8 @@
 package com.zst.xposed.perappfonts.lists;
 
+import java.text.Collator;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -76,7 +79,12 @@ public class FontAdapter extends BaseAdapter implements Filterable {
 						item.font = font.getValue();
 						temporaryList.add(item);
 					}
-
+					Collections.sort(temporaryList, new Comparator<FontItem>() {
+						@Override
+						public int compare(FontItem first, FontItem second) {
+							return Collator.getInstance().compare(first.title, second.title);
+						}
+					});
 					mFilteredFontsList = temporaryList;
 					notifyDataSetChangedOnHandler();
 					toggleProgressBarVisible(progressbar, false);

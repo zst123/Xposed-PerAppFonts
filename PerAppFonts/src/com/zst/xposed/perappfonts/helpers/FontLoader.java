@@ -2,7 +2,6 @@ package com.zst.xposed.perappfonts.helpers;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,7 +40,6 @@ public class FontLoader {
 			}
 		});
 		
-		Arrays.sort(file_array);
 		for (File file : file_array) {
 			map.put(file.getName(), Typeface.createFromFile(file));
 		}
