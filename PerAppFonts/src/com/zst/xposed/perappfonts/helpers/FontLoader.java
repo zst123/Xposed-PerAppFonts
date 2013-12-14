@@ -3,6 +3,7 @@ package com.zst.xposed.perappfonts.helpers;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import android.content.SharedPreferences;
@@ -34,7 +35,7 @@ public class FontLoader {
 		File[] file_array = folder.listFiles(new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String filename) {
-				if (filename.endsWith(".ttf"))
+				if (filename.toLowerCase(Locale.ENGLISH).endsWith(".ttf"))
 					return true;
 				return false;
 			}
