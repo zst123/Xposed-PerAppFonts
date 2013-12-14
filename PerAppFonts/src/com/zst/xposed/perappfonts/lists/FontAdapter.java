@@ -36,7 +36,6 @@ public class FontAdapter extends BaseAdapter implements Filterable {
 	private Handler mHandler;
 	private Context mContext;
 	private Resources mRes;
-	private SharedPreferences mPref;
 	protected List<FontItem> mFontsList = null;
 	protected List<FontItem> mFilteredFontsList = new LinkedList<FontItem>();
 	private LayoutInflater mLayoutInflater;
@@ -44,13 +43,12 @@ public class FontAdapter extends BaseAdapter implements Filterable {
 
 	@SuppressLint("WorldReadableFiles")
 	@SuppressWarnings("deprecation")
-	public FontAdapter(Context context) {
+	public FontAdapter(Context context, FontLoader ldr) {
 		mContext = context;
 		mRes = mContext.getResources();
-		mPref = mContext.getSharedPreferences(Common.PREFERENCE_MAIN, Activity.MODE_WORLD_READABLE);
 		mHandler = new Handler();
 		mLayoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		mFontLoader = new FontLoader(mPref);
+		mFontLoader = ldr;
 	}
 
 	public void update(final View progressbar) {

@@ -94,7 +94,7 @@ public class SettingsActivity extends Activity implements View.OnClickListener,
 			mFontLoader = new FontLoader(mMainPref);
 		
 		if (mFontAdapter == null)
-			mFontAdapter = new FontAdapter(this);
+			mFontAdapter = new FontAdapter(this, mFontLoader);
 		
 		getActionBar().setTitle(mAppName);
 		getActionBar().setSubtitle(mAppPkg);
