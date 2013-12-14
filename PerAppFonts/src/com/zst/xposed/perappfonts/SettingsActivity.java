@@ -53,7 +53,8 @@ public class SettingsActivity extends Activity implements View.OnClickListener,
 	LinearLayout mWeightLayout;
 	LinearLayout mForceLayout;
 	/* Font stuff */
-	FontLoader mFontLoader;
+	static FontLoader mFontLoader;
+	static FontAdapter mFontAdapter;
 	
 	/* Current App */
 	String mAppPkg;
@@ -88,7 +89,12 @@ public class SettingsActivity extends Activity implements View.OnClickListener,
 		mAppPref = getSharedPreferences(Common.PREFERENCE_APPS, MODE_WORLD_READABLE);
 		mMainPref = getSharedPreferences(Common.PREFERENCE_MAIN, MODE_WORLD_READABLE);
 		mForcePref = getSharedPreferences(Common.PREFERENCE_FORCE, MODE_WORLD_READABLE);
-		mFontLoader = new FontLoader(mMainPref);
+		
+		if (mFontLoader == null)
+			mFontLoader = new FontLoader(mMainPref);
+		
+		if (mFontAdapter == null)
+			mFontAdapter = new FontAdapter(this);
 		
 		getActionBar().setTitle(mAppName);
 		getActionBar().setSubtitle(mAppPkg);
@@ -267,10 +273,9 @@ public class SettingsActivity extends Activity implements View.OnClickListener,
 		final EditText search_text = (EditText) view.findViewById(R.id.edittext_search);
 		final ImageButton search_button = (ImageButton) view.findViewById(R.id.button_search);
 		final View progressbar = view.findViewById(R.id.progressbar);
-		final FontAdapter fontAdapter = new FontAdapter(this);
 		
-		fontAdapter.update(progressbar);
-		listview.setAdapter(fontAdapter);
+		mFontAdapter.update(progressbar);
+		listview.setAdapter(mFontAdapter);
 		listview.setPersistentDrawingCache(ViewGroup.PERSISTENT_ALL_CACHES);
 		listview.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_LOW);
 		listview.setOnItemClickListener(new OnItemClickListener() {
@@ -289,7 +294,7 @@ public class SettingsActivity extends Activity implements View.OnClickListener,
 		search_button.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				fontAdapter.getFilter().filter(search_text.getText().toString());
+				mFontAdapter.getFilter().filter(search_text.getText().toString());
 			}
 		});
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);

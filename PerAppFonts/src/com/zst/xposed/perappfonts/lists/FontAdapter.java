@@ -40,6 +40,7 @@ public class FontAdapter extends BaseAdapter implements Filterable {
 	protected List<FontItem> mFontsList = null;
 	protected List<FontItem> mFilteredFontsList = new LinkedList<FontItem>();
 	private LayoutInflater mLayoutInflater;
+	private FontLoader mFontLoader;
 
 	@SuppressLint("WorldReadableFiles")
 	@SuppressWarnings("deprecation")
@@ -49,6 +50,7 @@ public class FontAdapter extends BaseAdapter implements Filterable {
 		mPref = mContext.getSharedPreferences(Common.PREFERENCE_MAIN, Activity.MODE_WORLD_READABLE);
 		mHandler = new Handler();
 		mLayoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		mFontLoader = new FontLoader(mPref);
 	}
 
 	public void update(final View progressbar) {
@@ -60,8 +62,7 @@ public class FontAdapter extends BaseAdapter implements Filterable {
 					List<FontItem> temporaryList = new LinkedList<FontItem>();
 					mFilteredFontsList = temporaryList;
 					notifyDataSetChangedOnHandler();
-					FontLoader loader = new FontLoader(mPref);
-					Iterator<Entry<String, Typeface>> entrySetIter = loader.map.entrySet().iterator();
+					Iterator<Entry<String, Typeface>> entrySetIter = mFontLoader.map.entrySet().iterator();
 					while (entrySetIter.hasNext()) {
 						Entry<String, Typeface> font = entrySetIter.next();
 						FontItem item = new FontItem();
