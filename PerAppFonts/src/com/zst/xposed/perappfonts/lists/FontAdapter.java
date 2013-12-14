@@ -58,15 +58,6 @@ public class FontAdapter extends BaseAdapter implements Filterable {
 				synchronized (mFilteredFontsList) {
 					mFilteredFontsList.clear();
 					List<FontItem> temporaryList = new LinkedList<FontItem>();
-					String[] asset_array = FontHelper.getAssetFontNames(mRes);
-					for (int x = 0; x < asset_array.length; x++) {
-						FontItem item = new FontItem();
-						item.title = asset_array[x];
-						item.font = FontHelper.getFontFromAssets(mRes, x);
-						item.filename = Common.SETTINGS_PREFIX_FONT_ASSET + x;
-						item.asset = true;
-						temporaryList.add(item);
-					}
 					mFilteredFontsList = temporaryList;
 					notifyDataSetChangedOnHandler();
 					FontLoader loader = new FontLoader(mPref);
@@ -88,6 +79,15 @@ public class FontAdapter extends BaseAdapter implements Filterable {
 							return Collator.getInstance().compare(first.title, second.title);
 						}
 					});
+					String[] asset_array = FontHelper.getAssetFontNames(mRes);
+					for (int x = 0; x < asset_array.length; x++) {
+						FontItem item = new FontItem();
+						item.title = asset_array[x];
+						item.font = FontHelper.getFontFromAssets(mRes, x);
+						item.filename = Common.SETTINGS_PREFIX_FONT_ASSET + x;
+						item.asset = true;
+						temporaryList.add(x,item);
+					}
 					mFilteredFontsList = temporaryList;
 					notifyDataSetChangedOnHandler();
 					toggleProgressBarVisible(progressbar, false);
