@@ -52,5 +52,6 @@
     <!-- Others -->
     <string name="sample_text">ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 1234567890 !@#$%^*()_+][;,.{}|:"?</string>
     <string name="incompatible">(Incompatible)</string>
+    <string name="incompatible_warning">This font had trouble loading. It is most likely incompatible.\nUsing the default system font.</string>
 
 </resources>

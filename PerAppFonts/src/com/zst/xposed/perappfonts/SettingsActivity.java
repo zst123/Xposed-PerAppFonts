@@ -277,6 +277,11 @@ public class SettingsActivity extends Activity implements View.OnClickListener,
 			@Override
 			public void onItemClick(AdapterView<?> av, View view, int pos, long id) {
 				FontItem info = (FontItem) av.getItemAtPosition(pos);
+				if (info.filename.toString()
+						.endsWith(Common.SETTINGS_SUFFIX_INCOMPATIBLE)) {
+					Toast.makeText(view.getContext(), R.string.incompatible_warning,
+							Toast.LENGTH_LONG).show();
+				}
 				saveSettingsFont(info.filename.toString());
 				dialog.dismiss();
 			}
