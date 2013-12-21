@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">PerAppFonts</string>
+    <string name="app_description">Изменение шрифтов с PerAppFonts (zst123)</string>
+    <string name="search">@*android:string/search_go</string>
+    <string name="refresh">Обновить</string>
+    <string name="preference">Настройки</string>
+    <string name="toast_warning">Приложение загружается, пожалуйста подождите.</string>
+    <string name="font_folder_title">Папка с шрифтом</string>
+    <string name="font_folder_summary">"Шрифты будут загружены из этой папки :
+"</string>
+    <string name="font_everything_enable_title">Изменить шрифт системы (требуется перезагрузка)</string>
+    <string name="font_everything_enable_summary">"Заменить шрифт для каждого приложения, которое не имеет особых настроек в системе.
+Включение может привести к снижению производительности ."</string>
+    <string name="launch_app">Запустить</string>
+    <string name="launch_app_error">Ошибка. Приложение не запущено</string>
+    <string name="kill_app">Закрыть приложение</string>
+    <string name="kill_app_text">Принудительно завершить работу приложения? (необходим рут)</string>
+    <string name="please_note">Обратите внимание!</string>
+    <string name="please_note_android_system">"Изменение системных шрифтов не приведет к изменению всех шрифтов. Будут изменены Lockscreen, App-Not-Responding &amp;amp; Battery Low Dialogs и прочее.
+ Для изменение всех шрифтов, зайдите в настройки лаунчера/системы."</string>
+    <string name="please_note_app">Этот модуль заменяет шрифты на очень низком уровне. Некоторые приложения могут продолжать показывать свои шрифты, которые там установлены. Чтобы избежать этого, включите Force шрифты</string>
+    <string name="enabled">Включить</string>
+    <string name="enabled_android_system">Необходима перезагрузка для сохранения изменений.</string>
+    <string name="enabled_app">Перезапустите приложение, чтобы изменения вступили в силу.</string>
+    <string name="weight">Размер шрифта</string>
+    <string name="weight_default">По умолчанию</string>
+    <string name="weight_bold">Bold</string>
+    <string name="weight_italic">Italic</string>
+    <string name="weight_bolditalic">Bold &amp; Italic</string>
+    <string name="force_title">Force шрифты</string>
+    <string name="force_description">Если приложение всё еще показывает свой шрифт, необходимо использовать High уровень.</string>
+    <string name="font">Font Family</string>
+    <string name="font_change">Change Font Family</string>
+    <string name="font_default">System Default</string>
+    <string name="font_monospace">Monospace</string>
+    <string name="font_serif">Serif</string>
+    <string name="font_sans">Sans</string>
+    <string name="font_roboto_kitkat">Roboto Condensed (KitKat)</string>
+    <string name="font_storopia">Storopia</string>
+    <string name="font_rosemary">Rosemary</string>
+    <string name="font_roboto_slab">Roboto Slab</string>
+    <string name="sample_text">ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 1234567890 !@#$%^*()_+][;,.{}|:?</string>
+    <string name="incompatible">(несовместимо)</string>
+    <string name="incompatible_warning">"Ошибка совместимости. Шрифт не поддерживается. Будет использован системный шрифт."</string>
+
+</resources>
