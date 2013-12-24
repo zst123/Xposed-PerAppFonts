@@ -170,8 +170,13 @@ public class DirectoryChooserActivity extends Activity {
         }
         Intent resultData = new Intent();
         if (mSelectedDir != null) {
-            resultData.putExtra(RESULT_SELECTED_DIR,
-                    mSelectedDir.getAbsolutePath());
+        	String path;
+        	try {
+        		path = mSelectedDir.getCanonicalPath();
+        	} catch (Exception e) {
+        		path = mSelectedDir.getAbsolutePath();
+        	}
+            resultData.putExtra(RESULT_SELECTED_DIR, path);
         }
         setResult(RESULT_CODE_DIR_SELECTED, resultData);
         finish();
