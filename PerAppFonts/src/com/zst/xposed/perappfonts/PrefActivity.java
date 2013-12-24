@@ -37,7 +37,9 @@ public class PrefActivity extends PreferenceActivity {
 		prefFontFolder.setOnPreferenceClickListener(new OnPreferenceClickListener(){
 			@Override
 			public boolean onPreferenceClick(Preference arg0) {
-				startActivityForResult(new Intent(ctx, DirectoryChooserActivity.class), REQUEST_DIRECTORY);
+				Intent i = new Intent(ctx, DirectoryChooserActivity.class);
+				i.putExtra(DirectoryChooserActivity.EXTRA_INITIAL_DIRECTORY, "/sdcard/");
+				startActivityForResult(i, REQUEST_DIRECTORY);
 				return true;
 			}
 		});
