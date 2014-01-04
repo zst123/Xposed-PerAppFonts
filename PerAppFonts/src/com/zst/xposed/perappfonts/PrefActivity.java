@@ -2,6 +2,7 @@ package com.zst.xposed.perappfonts;
 
 import net.rdrei.android.dirchooser.DirectoryChooserActivity;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences.Editor;
@@ -68,10 +69,23 @@ public class PrefActivity extends PreferenceActivity {
 				edit.putString(prefFontFolder.getKey(),
 						data.getStringExtra(DirectoryChooserActivity.RESULT_SELECTED_DIR));
 				edit.commit();
+				showDirectoryWarning(data.getStringExtra(DirectoryChooserActivity.RESULT_SELECTED_DIR));
 				updateSummary();
 			} else {
 				// Nothing selected
 			}
 		}
+	}
+	
+	private void showDirectoryWarning(String dir) {
+		if (!dir.startsWith("/mnt/emulated"))
+			if (!dir.startsWith("/storage/emulated"))
+					if (!dir.startsWith("/mnt/shell/emulated"))
+						return;
+		
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage(R.string.font_folder_warning);
+		builder.setPositiveButton(android.R.string.yes, null);
+		builder.create().show();
 	}
 }

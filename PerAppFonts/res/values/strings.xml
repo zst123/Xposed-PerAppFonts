@@ -14,6 +14,7 @@
     <!-- PreferenceActivity -->
     <string name="font_folder_title">Font Folder</string>
     <string name="font_folder_summary">Fonts will be loaded from this folder on boot-up:\n</string>
+    <string name="font_folder_warning">It is detected that you have chosen an \"emulated\" SD Card path.\n\nThese would not work at startup since it is not initialized early enough.\n\nPlease select a folder inside your SD Card\'s actual path.\n\nExamples of actual SD Card paths:\n/sdcard/folder/ \n/mnt/sdcard/ \n/storage/sdcard/</string>
     <string name="font_everything_enable_title">Replace Entire System Font (Requires reboot)</string>
     <string name="font_everything_enable_summary">Replace the font for every app that doesn\'t have a setting with the one specified for Android System. \nEnabling this could degrade performance.</string>
 
