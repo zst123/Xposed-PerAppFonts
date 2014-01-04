@@ -30,6 +30,10 @@ public class PrefActivity extends PreferenceActivity {
 		setPreferenceScreen(createPreferences(this));
 	}
 	
+	@SuppressLint("SdCardPath")
+	/* We hardcode /sdcard/ because we want the user to use /sdcard/ instead of emulated
+	 * sdcard file paths such as /storage/emulated/0/ that was introduced in Android 4.2
+	 * due to the multi-user account feature. */
 	private PreferenceScreen createPreferences(final Context ctx) {
 		PreferenceScreen root = getPreferenceManager().createPreferenceScreen(this);
 		prefFontFolder = new Preference(this); 
