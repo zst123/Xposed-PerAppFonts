@@ -2,7 +2,6 @@ package com.zst.xposed.perappfonts;
 
 import net.rdrei.android.dirchooser.DirectoryChooserActivity;
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences.Editor;
@@ -30,10 +29,6 @@ public class PrefActivity extends PreferenceActivity {
 		setPreferenceScreen(createPreferences(this));
 	}
 	
-	@SuppressLint("SdCardPath")
-	/* We hardcode /sdcard/ because we want the user to use /sdcard/ instead of emulated
-	 * sdcard file paths such as /storage/emulated/0/ that was introduced in Android 4.2
-	 * due to the multi-user account feature. */
 	private PreferenceScreen createPreferences(final Context ctx) {
 		PreferenceScreen root = getPreferenceManager().createPreferenceScreen(this);
 		prefFontFolder = new Preference(this); 
@@ -42,9 +37,7 @@ public class PrefActivity extends PreferenceActivity {
 		prefFontFolder.setOnPreferenceClickListener(new OnPreferenceClickListener(){
 			@Override
 			public boolean onPreferenceClick(Preference arg0) {
-				Intent i = new Intent(ctx, DirectoryChooserActivity.class);
-				i.putExtra(DirectoryChooserActivity.EXTRA_INITIAL_DIRECTORY, "/sdcard/");
-				startActivityForResult(i, REQUEST_DIRECTORY);
+				startActivityForResult(new Intent(ctx, DirectoryChooserActivity.class), REQUEST_DIRECTORY);
 				return true;
 			}
 		});
@@ -73,23 +66,10 @@ public class PrefActivity extends PreferenceActivity {
 				edit.putString(prefFontFolder.getKey(),
 						data.getStringExtra(DirectoryChooserActivity.RESULT_SELECTED_DIR));
 				edit.commit();
-				showDirectoryWarning(data.getStringExtra(DirectoryChooserActivity.RESULT_SELECTED_DIR));
 				updateSummary();
 			} else {
 				// Nothing selected
 			}
 		}
-	}
-	
-	private void showDirectoryWarning(String dir) {
-		if (!dir.startsWith("/mnt/emulated"))
-			if (!dir.startsWith("/storage/emulated"))
-					if (!dir.startsWith("/mnt/shell/emulated"))
-						return;
-		
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage(R.string.font_folder_warning);
-		builder.setPositiveButton(android.R.string.yes, null);
-		builder.create().show();
 	}
 }
