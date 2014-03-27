@@ -10,9 +10,11 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 
 public class MainXposed implements IXposedHookZygoteInit, IXposedHookLoadPackage {
 	
-	public static XSharedPreferences sForcePref;
-	public static XSharedPreferences sMainPref;
-	public static XSharedPreferences sAppPref;
+	public XSharedPreferences sMainPref;
+	public XSharedPreferences sAppPref;
+	public XSharedPreferences sWeightPref;
+	public XSharedPreferences sForcePref;
+	
 	public static XModuleResources sModuleRes;
 	public static String MODULE_PATH = null;
 	public static FontLoader sFontLoader;
@@ -22,7 +24,8 @@ public class MainXposed implements IXposedHookZygoteInit, IXposedHookLoadPackage
 	@Override
 	public void initZygote(StartupParam startupParam) throws Throwable {
 		sMainPref = new XSharedPreferences(Common.PACKAGE_PER_APP_FONTS, Common.PREFERENCE_MAIN);
-		sAppPref = new XSharedPreferences(Common.PACKAGE_PER_APP_FONTS, Common.PREFERENCE_APPS);
+		sAppPref = new XSharedPreferences(Common.PACKAGE_PER_APP_FONTS, Common.PREFERENCE_TYPEFACE);
+		sWeightPref = new XSharedPreferences(Common.PACKAGE_PER_APP_FONTS, Common.PREFERENCE_WEIGHT);
 		sForcePref = new XSharedPreferences(Common.PACKAGE_PER_APP_FONTS, Common.PREFERENCE_FORCE);
 		MODULE_PATH = startupParam.modulePath;
 		sModuleRes = XModuleResources.createInstance(MODULE_PATH, null);
@@ -49,19 +52,13 @@ public class MainXposed implements IXposedHookZygoteInit, IXposedHookLoadPackage
 	@Override
 	public void handleLoadPackage(LoadPackageParam lpp) throws Throwable {
 		if (sEveryAppFontEnabled){
-			AppsHook.handleAllApps(lpp, sMainPref);
+			AppsHook.handleAllApps(lpp, sAppPref, sWeightPref);
 		}
 		
 		boolean hook;
-		if (lpp.packageName.equals(Common.PACKAGE_ANDROID_SYSTEM) ||
-			lpp.packageName.equals("com.android.systemui")) {
-			hook = AppsHook.handleLoadSystem(lpp, sMainPref);
-			ForceFontsHook.handleLoad(lpp, sForcePref, sMainPref);
-		} else {
-			hook = AppsHook.handleLoadApps(lpp, sAppPref);
-			ForceFontsHook.handleLoad(lpp, sForcePref, sAppPref);
-		}
-		
+		hook = AppsHook.handleLoadApps(lpp, sAppPref, sWeightPref);
+		ForceFontsHook.handleLoad(lpp, sForcePref, sAppPref);
+
 		if (sEveryAppFontEnabled && !hook) {
 			ForceFontsHook.handleLoadAllApps(lpp, sForcePref, sAppPref);
 		}

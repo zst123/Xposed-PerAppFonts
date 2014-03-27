@@ -1,7 +1,6 @@
 package com.zst.xposed.perappfonts.hooks;
 
 import android.graphics.Typeface;
-import android.util.Log;
 import android.widget.TextView;
 
 import com.zst.xposed.perappfonts.Common;
@@ -19,40 +18,26 @@ public class AppsHook {
 	public static boolean isInitialFontSet = false;
 	public static FontType mFontType = new FontType();
 	
-	/*
-	 * This method holds the hooks for SystemUI and Android System Server.
-	 * It's separated from the rest of the apps due to the different
-	 * XSharedPreference file. They are separated since there could be 100's
-	 * of apps and we don't want to slow boot time by reading from a large file.
-	 */
-	public static boolean handleLoadSystem(final LoadPackageParam lpp, XSharedPreferences pref) {
-		if (lpp.packageName.equals(Common.PACKAGE_ANDROID_SYSTEM) ||
-			lpp.packageName.equals("com.android.systemui")) {
-			pref.reload();
-			if (!pref.contains(lpp.packageName)) return false;
-			String unparsed = pref.getString(lpp.packageName, Common.DEFAULT_FONT_ALL_APPS);
-			mFontType = FontHelper.parsedPref(MainXposed.sModuleRes, unparsed,
-					MainXposed.sFontLoader);
-			hookTextView(lpp, XCallback.PRIORITY_HIGHEST);
-			return true;
-		}
-		return false;
-	}
-	
-	public static boolean handleLoadApps(final LoadPackageParam lpp, XSharedPreferences pref) {
-		pref.reload();
-		if (!pref.contains(lpp.packageName)) return false;
-		String unparsed = pref.getString(lpp.packageName, Common.DEFAULT_FONT_ALL_APPS);
-		mFontType = FontHelper.parsedPref(MainXposed.sModuleRes, unparsed, MainXposed.sFontLoader);
-		Log.d("test", "GGG=" + unparsed + lpp.packageName);
+	public static boolean handleLoadApps(final LoadPackageParam lpp, XSharedPreferences font_pref, XSharedPreferences weight_pref) {
+		font_pref.reload();
+		if (!font_pref.contains(lpp.packageName)) return false;
+		weight_pref.reload();
+		String font = font_pref.getString(lpp.packageName, Common.DEFAULT_FONT_TYPEFACE);
+		String weight = weight_pref.getString(lpp.packageName, Common.DEFAULT_FONT_WEIGHT);
+		
+		mFontType = FontHelper.parseValues(MainXposed.sModuleRes, MainXposed.sFontLoader, font, weight);
 		hookTextView(lpp, XCallback.PRIORITY_HIGHEST);
 		return true;
 	}
 	
-	public static void handleAllApps(final LoadPackageParam lpp, XSharedPreferences pref) {
-		pref.reload();
-		String fontString = pref.getString(Common.KEY_FONT_ANDROID_SYSTEM, Common.DEFAULT_FONT_ALL_APPS);
-		mFontType = FontHelper.parsedPref(MainXposed.sModuleRes, fontString, MainXposed.sFontLoader);
+	public static void handleAllApps(final LoadPackageParam lpp, XSharedPreferences font_pref, XSharedPreferences weight_pref) {
+		font_pref.reload();
+		if (!font_pref.contains(Common.PACKAGE_ANDROID_SYSTEM)) return;
+		weight_pref.reload();
+		String font = font_pref.getString(Common.PACKAGE_ANDROID_SYSTEM, Common.DEFAULT_FONT_TYPEFACE);
+		String weight = weight_pref.getString(Common.PACKAGE_ANDROID_SYSTEM, Common.DEFAULT_FONT_WEIGHT);
+		
+		mFontType = FontHelper.parseValues(MainXposed.sModuleRes, MainXposed.sFontLoader, font, weight);
 		hookTextView(lpp, XCallback.PRIORITY_LOWEST);
 	}
 	

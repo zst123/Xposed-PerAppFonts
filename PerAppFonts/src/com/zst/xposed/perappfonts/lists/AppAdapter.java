@@ -32,15 +32,13 @@ public class AppAdapter extends ArrayAdapter<AppEntry> implements Filterable {
 	private List<AppEntry> mData;
 	
 	private SharedPreferences mAppPref;
-	private SharedPreferences mMainPref;
 	
 	@SuppressLint("WorldReadableFiles")
 	@SuppressWarnings("deprecation")
 	public AppAdapter(Context context) {
 		super(context, R.layout.view_app_list);
 		// TODO Move loading sharedPref to Loader
-		mAppPref = context.getSharedPreferences(Common.PREFERENCE_APPS, Activity.MODE_WORLD_READABLE);
-		mMainPref = context.getSharedPreferences(Common.PREFERENCE_MAIN, Activity.MODE_WORLD_READABLE);
+		mAppPref = context.getSharedPreferences(Common.PREFERENCE_TYPEFACE, Activity.MODE_WORLD_READABLE);
 		mLayoutInflater = LayoutInflater.from(context);
 	}
 
@@ -80,14 +78,8 @@ public class AppAdapter extends ArrayAdapter<AppEntry> implements Filterable {
 		holder.name.setText(appInfo.getLabel());
 
 		String packageName = appInfo.getPackageName();
-		boolean pref_enabled;
-
-		if (packageName.equals(Common.PACKAGE_ANDROID_SYSTEM) || packageName.equals("com.android.systemui")) {
-			pref_enabled = mMainPref.contains(packageName);
-		} else {
-			pref_enabled = mAppPref.contains(packageName);
-		}
-
+		boolean pref_enabled = mAppPref.contains(packageName);
+		
 		holder.name.setTextColor(pref_enabled ? Color.BLUE : Color.BLACK);
 		holder.pkg.setText(packageName);
 		holder.icon.setImageDrawable(appInfo.getIcon());

@@ -74,7 +74,7 @@ public class FontHelper {
 		return getFontFromAssets(res, Integer.parseInt(index));
 	}
 	
-	public static Typeface parseSettingsFontSyntax(Resources res, String unparsed,
+	private static Typeface parseSettingsFontSyntax(Resources res, String unparsed,
 			FontLoader loader) {
 		if (unparsed.startsWith(Common.SETTINGS_PREFIX_FONT_ASSET)) {
 			unparsed = unparsed.substring(Common.SETTINGS_PREFIX_FONT_ASSET.length());
@@ -84,11 +84,10 @@ public class FontHelper {
 		}
 	}
 	
-	public static FontType parsedPref(Resources res, String unparsed, FontLoader loader) {
-		String[] string = unparsed.split(Common.SETTINGS_SPLIT_SYMBOL);
+	public static FontType parseValues(Resources res, FontLoader loader, String typeface, String weight) {
 		FontType fType = new FontType();
-		fType.font = parseSettingsFontSyntax(res, string[Common.SETTINGS_INDEX_FONT], loader);
-		fType.weight = Integer.parseInt(string[Common.SETTINGS_INDEX_WEIGHT]);
+		fType.font = parseSettingsFontSyntax(res, typeface, loader);
+		fType.weight = Integer.parseInt(weight);
 		return fType;
 	}
 	

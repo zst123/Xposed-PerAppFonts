@@ -62,10 +62,10 @@ public class SettingsActivity extends Activity implements View.OnClickListener,
 	Drawable mIcon;
 	
 	/* Prefs */
-	SharedPreferences mAppPref;
+	SharedPreferences mAppFontPref;
+	SharedPreferences mWeightPref;
 	SharedPreferences mMainPref;
 	SharedPreferences mForcePref;
-	SharedPreferences mCurrentPref;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +86,8 @@ public class SettingsActivity extends Activity implements View.OnClickListener,
 	@SuppressLint("WorldReadableFiles")
 	@SuppressWarnings("deprecation")
 	private void initialize() {
-		mAppPref = getSharedPreferences(Common.PREFERENCE_APPS, MODE_WORLD_READABLE);
+		mAppFontPref = getSharedPreferences(Common.PREFERENCE_TYPEFACE, MODE_WORLD_READABLE);
+		mWeightPref = getSharedPreferences(Common.PREFERENCE_WEIGHT, MODE_WORLD_READABLE);
 		mMainPref = getSharedPreferences(Common.PREFERENCE_MAIN, MODE_WORLD_READABLE);
 		mForcePref = getSharedPreferences(Common.PREFERENCE_FORCE, MODE_WORLD_READABLE);
 		
@@ -117,17 +118,11 @@ public class SettingsActivity extends Activity implements View.OnClickListener,
 		enabled_text.setText((mAppPkg.equals("android")) ? R.string.enabled_android_system
 				: R.string.enabled_app);
 		
-		if (mAppPkg.equals("android") || mAppPkg.equals("com.android.systemui")) {
-			mCurrentPref = mMainPref;
-		} else {
-			mCurrentPref = mAppPref;
-		}
-		boolean isFound = mCurrentPref.contains(mAppPkg);
+		boolean isFound = mAppFontPref.contains(mAppPkg);
 		mEnableSwitch.setChecked(isFound);
 		changeLayoutVisibility(isFound);
 		
-		String raw_string = mCurrentPref.getString(mAppPkg, Common.DEFAULT_FONT_ALL_APPS);
-		initPreferenceValues(raw_string);
+		initPreferenceValues();
 		
 		mChangeFontButton.setOnClickListener(this);
 		mRadioGroup.setOnCheckedChangeListener(this);
@@ -135,11 +130,11 @@ public class SettingsActivity extends Activity implements View.OnClickListener,
 		mForceSwitch.setOnCheckedChangeListener(mSwitchListener);
 	}
 	
-	private void initPreferenceValues(String unparsed) {
-		String raw_font_name = unparsed.split(Common.SETTINGS_SPLIT_SYMBOL)
-				[Common.SETTINGS_INDEX_FONT];		
-		FontType type_font = FontHelper.parsedPref(getResources(), unparsed, mFontLoader);
-		String proper_font_name = FontHelper.parseFontSyntaxIntoName(getResources(), raw_font_name);
+	private void initPreferenceValues() {
+		String typeface = mAppFontPref.getString(mAppPkg, Common.DEFAULT_FONT_TYPEFACE);
+		String weight = mWeightPref.getString(mAppPkg, Common.DEFAULT_FONT_WEIGHT);
+		FontType type_font = FontHelper.parseValues(getResources(), mFontLoader, typeface, weight);
+		String proper_font_name = FontHelper.parseFontSyntaxIntoName(getResources(), typeface);
 		mFontPreview.setText(proper_font_name + "  "
 				+ getResources().getString(R.string.sample_text) + " ");
 		mFontPreview.setTypeface(type_font.font, type_font.weight);
@@ -213,23 +208,21 @@ public class SettingsActivity extends Activity implements View.OnClickListener,
 		} else {
 			mForcePref.edit().remove(mAppPkg).commit();
 		}
-		initPreferenceValues(mCurrentPref.getString(mAppPkg, Common.DEFAULT_FONT_ALL_APPS));
+		initPreferenceValues();
 	}
 	
-	private void saveSettingsFont(String fontfile) {
-		String raw_string = mCurrentPref.getString(mAppPkg, Common.DEFAULT_FONT_ALL_APPS);
-		String weight = raw_string.split(Common.SETTINGS_SPLIT_SYMBOL)[Common.SETTINGS_INDEX_WEIGHT];
-		String newValue = fontfile + Common.SETTINGS_SPLIT_SYMBOL + weight;
-		mCurrentPref.edit().putString(mAppPkg, newValue).commit();
-		initPreferenceValues(mCurrentPref.getString(mAppPkg, Common.DEFAULT_FONT_ALL_APPS));
+	private void saveSettingsFont(String font) {
+		mAppFontPref.edit().putString(mAppPkg, font).commit();
+		initPreferenceValues();
 	}
 	
 	private void saveSettingsWeight(int weight) {
-		String raw_string = mCurrentPref.getString(mAppPkg, Common.DEFAULT_FONT_ALL_APPS);
-		String font = raw_string.split(Common.SETTINGS_SPLIT_SYMBOL)[Common.SETTINGS_INDEX_FONT];
-		String newValue = font + Common.SETTINGS_SPLIT_SYMBOL + weight;
-		mCurrentPref.edit().putString(mAppPkg, newValue).commit();
-		initPreferenceValues(mCurrentPref.getString(mAppPkg, Common.DEFAULT_FONT_ALL_APPS));
+		if (weight != Typeface.NORMAL) {
+			mWeightPref.edit().putString(mAppPkg, weight + "").commit();
+		} else {
+			mWeightPref.edit().remove(mAppPkg).commit();
+		}
+		initPreferenceValues();
 	}
 	
 	private void showKillPackageDialog(final String pkgToKill) {
@@ -263,7 +256,6 @@ public class SettingsActivity extends Activity implements View.OnClickListener,
 	}
 	
 	private void showFontChooser() {
-		
 		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		View view = getLayoutInflater().inflate(R.layout.layout_app_list, null);
 		builder.setView(view);
@@ -305,7 +297,8 @@ public class SettingsActivity extends Activity implements View.OnClickListener,
 	public void onPause() {
 		super.onPause();
 		if(!mEnableSwitch.isChecked()){
-			mCurrentPref.edit().remove(mAppPkg).commit();
+			mWeightPref.edit().remove(mAppPkg).commit();
+			mAppFontPref.edit().remove(mAppPkg).commit();
 			mForcePref.edit().remove(mAppPkg).commit();
 		}
 	}
