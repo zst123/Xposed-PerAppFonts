@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cancel_label">取消</string>
+    <string name="confirm_label">確定</string>
+    <string name="selected_folder_label">已選擇的文件夾:</string>
+    <string name="create_folder_label">創建文件夾</string>
+    <string name="create_folder_msg">創建名為 %1$s 的新文件夾？</string>
+    <string name="create_folder_success">已創建新文件夾</string>
+    <string name="create_folder_error_no_write_access">無法讀取此文件夾</string>
+    <string name="create_folder_error_already_exists">已存在同名文件夹</string>
+    <string name="create_folder_error">無法創建文件夾</string>
+    <string name="up_label">上一層</string>
+    <string name="app_name">隨心字體</string>
+    <string name="app_description">自定義每一個應用程序內所使用的字體(開發by zst123)</string>
+    <string name="search">@*android:string/search_go</string>
+    <string name="refresh">刷新</string>
+    <string name="preference">設置</string>
+    <string name="toast_warning">應用程序仍在加載中，請稍等。</string>
+    <string name="font_folder_title">字體文件夾</string>
+    <string name="font_folder_summary">將會在啟動时從此文件夾中加載字體文件:</string>
+    <string name="font_folder_warning">"選擇一個SD卡路徑後會自動檢測字體文件。
+
+請選擇一個在你的SD卡內正確的文件夾路徑。
+
+正確的SD卡路徑例如:
+/sdcard/folder/ 
+/mnt/sdcard/ 
+/storage/sdcard/"</string>
+    <string name="font_everything_enable_title">取代系統字體 (需重啟設備)</string>
+    <string name="font_everything_enable_summary">"取代每一個應用程序內的系統字體為安卓系統字體。
+激活此選項會降低系統性能。"</string>
+    <string name="launch_app">啟動應用程序</string>
+    <string name="launch_app_error">無法啟動應用程序</string>
+    <string name="kill_app">結束應用程序</string>
+    <string name="kill_app_text">"強行停止此應用程序？
+(需授予ROOT權限)"</string>
+    <string name="please_note">請注意</string>
+    <string name="please_note_android_system">"更改安卓系統字體不是更改整個系統的字體。它在框架內只會更改類似於鎖屏的顯示字體，應用程序未響應以及低電量提示框的顯示字體等。
+想要更改整個安卓系統字體，你可以在模塊主界面找到設置選項"</string>
+    <string name="please_note_app">這個模塊所取代的字體在一個非常低的等級內。一些應用程序可能會繼續顯示它們自帶的字體。如果想要防止此情況的發生，請啟用強制字體。</string>
+    <string name="enabled">啟用</string>
+    <string name="enabled_android_system">需要重啟才能使所更改的安卓系統字體生效</string>
+    <string name="enabled_app">你需要強行停止應用程序來使更改生效。</string>
+    <string name="weight">字體類型</string>
+    <string name="weight_default">默認</string>
+    <string name="weight_bold">粗體</string>
+    <string name="weight_italic">斜體</string>
+    <string name="weight_bolditalic">粗體+斜體</string>
+    <string name="force_title">強制字體</string>
+    <string name="force_description">如果應用程序仍然顯示它們的自帶字體，使用此選項可以強制使用自定義字體。此選項所取代的字體在一個最高的等級內。</string>
+    <string name="font">字體樣式</string>
+    <string name="font_change">更換字體樣式</string>
+    <string name="font_default">系統默認</string>
+    <string name="font_monospace">Monospace</string>
+    <string name="font_serif">Serif</string>
+    <string name="font_sans">Sans</string>
+    <string name="font_roboto_kitkat">Roboto Condensed (KitKat)</string>
+    <string name="font_storopia">Storopia</string>
+    <string name="font_rosemary">Rosemary</string>
+    <string name="font_roboto_slab">Roboto Slab</string>
+    <string name="sample_text">敬請關注百度Xposed框架吧～！</string>
+    <string name="incompatible">(不兼容)</string>
+    <string name="incompatible_warning">"無法加載此字體。它可能無法兼容。
+正在使用默認系統字體。"</string>
+</resources>
