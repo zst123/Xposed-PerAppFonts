@@ -1,11 +1,14 @@
 package com.zst.xposed.perappfonts.hooks;
 
 import android.graphics.Typeface;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.zst.xposed.perappfonts.Common;
 import com.zst.xposed.perappfonts.helpers.FontHelper;
 import com.zst.xposed.perappfonts.helpers.FontHelper.FontType;
+import com.zst.xposed.perappfonts.ipc.FontServiceManager;
+import com.zst.xposed.perappfonts.ipc.IFontService;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XSharedPreferences;
@@ -45,6 +48,18 @@ public class AppsHook {
 		XposedBridge.hookAllConstructors(TextView.class, new XC_MethodHook(priority) {
 			@Override
 			protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+				final TextView tv1 = ((TextView) param.thisObject);
+				
+				IFontService mgr = FontServiceManager.retrieveService(tv1.getContext());
+				if (mgr != null) {
+					Log.d("test", tv1.getContext().getPackageName() + "//"+mgr.getFontFolder());
+				}
+				if (tv1.getContext().getPackageName().equals("com.android.settings")) {
+					//mFontType = FontHelper.parseValues(MainXposed.sModuleRes, mgr.mFontLoader, "Syntax.ttf", Typeface.ITALIC+"");
+					tv1.setTypeface(mgr.findFonts("Syntax.ttf").typeface);
+					return;
+				}
+				
 				if (mFontType == null) return;
 				isInitialFontSet = false;
 				

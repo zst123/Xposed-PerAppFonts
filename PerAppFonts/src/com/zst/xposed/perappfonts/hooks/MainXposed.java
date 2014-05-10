@@ -2,7 +2,10 @@ package com.zst.xposed.perappfonts.hooks;
 
 import com.zst.xposed.perappfonts.Common;
 import com.zst.xposed.perappfonts.helpers.FontLoader;
+import com.zst.xposed.perappfonts.ipc.FontServiceManager;
+
 import android.content.res.XModuleResources;
+import android.util.Log;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XSharedPreferences;
@@ -47,10 +50,12 @@ public class MainXposed implements IXposedHookZygoteInit, IXposedHookLoadPackage
 		 * inform me(zst123).
 		 */
 		sEveryAppFontEnabled = sMainPref.getBoolean(Common.KEY_ENABLE_EVERY_APP, false);
+		FontServiceManager.initZygote(sMainPref);
 	}
 	
 	@Override
 	public void handleLoadPackage(LoadPackageParam lpp) throws Throwable {
+		Log.d("zst123", "load = " +lpp.packageName);
 		if (sEveryAppFontEnabled){
 			AppsHook.handleAllApps(lpp, sAppPref, sWeightPref);
 		}
