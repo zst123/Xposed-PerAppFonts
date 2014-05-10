@@ -55,8 +55,7 @@ public class MainXposed implements IXposedHookZygoteInit, IXposedHookLoadPackage
 			AppsHook.handleAllApps(lpp, sAppPref, sWeightPref);
 		}
 		
-		boolean hook;
-		hook = AppsHook.handleLoadApps(lpp, sAppPref, sWeightPref);
+		boolean hook = AppsHook.handleLoadApps(lpp, sAppPref, sWeightPref);
 		ForceFontsHook.handleLoad(lpp, sForcePref, sAppPref);
 
 		if (sEveryAppFontEnabled && !hook) {

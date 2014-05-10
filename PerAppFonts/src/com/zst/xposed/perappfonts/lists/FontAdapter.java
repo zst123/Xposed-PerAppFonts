@@ -9,9 +9,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -42,7 +40,6 @@ public class FontAdapter extends BaseAdapter implements Filterable {
 	private FontLoader mFontLoader;
 
 	@SuppressLint("WorldReadableFiles")
-	@SuppressWarnings("deprecation")
 	public FontAdapter(Context context, FontLoader ldr) {
 		mContext = context;
 		mRes = mContext.getResources();
@@ -172,10 +169,7 @@ public class FontAdapter extends BaseAdapter implements Filterable {
 
 			@Override
 			protected FilterResults performFiltering(CharSequence constraint) {
-				FilterResults results = new FilterResults();// Holds the results
-															// of a filtering
-															// operation in
-															// values
+				FilterResults results = new FilterResults();
 				List<FontItem> temporaryList = new LinkedList<FontItem>();
 
 				if (mFontsList == null) {
